@@ -1,12 +1,15 @@
 class Room {
+
   constructor(id, name) {
     this.id = id
     this.title = name
-    this.users = []
+    this.users = new Map()
+    this.started = false
+    this.game = null
   }
 
   join(user) {
-    this.users.push(user)
+    this.users.set(user.id, user)
   }
 }
 
