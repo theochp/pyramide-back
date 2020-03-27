@@ -14,14 +14,15 @@ rooms.set("42", new Room("42", 'Default room'))
 roomsSockets.set("42", new Map())
 
 const joinRoom = (roomId, user, socket) => {
+
   roomsSockets.get(roomId).set(user.id, socket)
   rooms.get(roomId).join(user)
 }
 
 server.on('connection', socket => {
   // TODO : remove these two lines, find a way to properly remove player from party
-  rooms.set("42", new Room("42", 'Default room'))
-  roomsSockets.set("42", new Map())
+  // rooms.set("42", new Room("42", 'Default room'))
+  // roomsSockets.set("42", new Map())
   socket.on('joinRoom', data => {
     const joinRoomResponse = {
       success: false,

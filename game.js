@@ -102,7 +102,6 @@ const gamePhaseDeal1 = async (game, sockets) => {
 
   const socketsIt = sockets.entries()
   let next = socketsIt.next()
-
   while (!next.done) {
     const userId = next.value[0]
     const socket = next.value[1]
