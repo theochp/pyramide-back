@@ -2,7 +2,7 @@ const Constants = require('../constants')
 
 const requestInput = (socket, token) => {
   socket.emit('gameActionRequest', {
-    gameRequest: Constants.GAME_REQUEST_DEAL_1_RED_OR_BLACK,
+    gameRequest: Constants.GAME_REQUEST_DEAL_2_MORE_OR_LESS,
     responseToken: token,
   })
 }
@@ -11,19 +11,29 @@ const handleResponse = async (socket, game, user, token) => {
   return new Promise(resolve => {
     socket.on('gameActionResponse', data => {
       if (data.responseToken === token) {
-        if ([Constants.GAME_RESPONSE_DEAL_1_BLACK, Constants.GAME_RESPONSE_DEAL_1_RED].includes(data.response)) {
+        if ([Constants.GAME_RESPONSE_DEAL_2_MORE, Constants.GAME_RESPONSE_DEAL_2_LESS].includes(data.response)) {
           const card = game.deck[game.deckPtr++]
-          if (
-            [Constants.CARD_SUIT_CLUB, Constants.CARD_SUIT_SPADE].includes(card.suit) && data.response === Constants.GAME_RESPONSE_DEAL_1_BLACK
-            || [Constants.CARD_SUIT_DIAMOND, Constants.CARD_SUIT_HEART].includes(card.suit) && data.response === Constants.GAME_RESPONSE_DEAL_1_RED
-          ) {
+
+          let isValid = true
+          if (user.cards.length !== 1) {
+            isValid = false
+          } else {
+            const firstCard = user.cards[0]
+            if (data.response === Constants.GAME_RESPONSE_DEAL_2_MORE && firstCard.value >= card.value) {
+              isValid = false
+            } else if (data.response === Constants.GAME_RESPONSE_DEAL_2_LESS && firstCard.value <= card.value) {
+              isValid = false
+            }
+          }
+
+          if (isValid) {
             socket.emit('gameActionResponse', {
               ok: true,
               card: card
             })
           } else {
             socket.emit('gameActionResponse', {
-              gorgee: ++user.gorgees,
+              gorgee: user.gorgees += 2,
               card: card
             })
           }

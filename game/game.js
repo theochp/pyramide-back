@@ -1,5 +1,6 @@
 const Constants = require('./constants')
-const phaseDeal1 = require('./phases/phaseDeal1')
+const phaseDeal = require('./phases/phaseDeal')
+
 class Card {
   constructor(suit, value) {
     if (
@@ -11,8 +12,9 @@ class Card {
       ].includes(suit)
       && value >= 1
       && value <= 13
-    )
+    ) {
       this.suit = suit
+    }
     this.value = value
   }
 }
@@ -73,7 +75,8 @@ const startGame = async (room, sockets) => {
 
   game.generateDeck()
   game.shuffleDeck()
-  await phaseDeal1(game, sockets)
+  await phaseDeal(1, game, sockets)
+  await phaseDeal(2, game, sockets)
 }
 
 module.exports = {
