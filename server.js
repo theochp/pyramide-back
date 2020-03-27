@@ -2,7 +2,7 @@ const io = require('socket.io')
 const uuid = require('uuid').v4
 const Room = require('./data/room')
 const User = require('./data/user')
-const startGame = require('./game')
+const { startGame } = require('./game/game')
 
 const server = io.listen(3001)
 
@@ -53,5 +53,8 @@ server.on('connection', socket => {
   socket.on('startGame', data => {
     const roomId = data['roomId']
     startGame(rooms.get(roomId), roomsSockets.get(roomId))
+      .then(() => {
+        console.log('game ended for room ' + roomId)
+      })
   })
 })
