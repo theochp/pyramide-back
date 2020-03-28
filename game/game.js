@@ -76,7 +76,12 @@ const startGame = async (room, sockets) => {
   game.generateDeck()
   game.shuffleDeck()
   await phaseDeal(1, game, sockets)
+  await delay(500)
   await phaseDeal(2, game, sockets)
+  await delay(500)
+  await phaseDeal(3, game, sockets)
+  await delay(500)
+  await phaseDeal(4, game, sockets)
 }
 
 module.exports = {

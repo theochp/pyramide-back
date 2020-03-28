@@ -4,6 +4,8 @@ const Constants = require('../constants')
 const phaseDealHandlers = {
   1: require('./phaseDeal1'),
   2: require('./phaseDeal2'),
+  3: require('./phaseDeal3'),
+  4: require('./phaseDeal4'),
 }
 
 const gamePhaseDeal = async (phaseDeal, game, sockets) => {
