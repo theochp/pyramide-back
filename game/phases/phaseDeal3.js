@@ -9,7 +9,7 @@ const requestInput = (socket, token) => {
 
 const handleResponse = async (socket, game, user, token) => {
   return new Promise(resolve => {
-    socket.on('gameActionResponse', data => {
+    socket.on('gameActionResponse', function listener(data) {
       if (data.responseToken === token) {
         if ([Constants.GAME_DEAL_3_INSIDE, Constants.GAME_DEAL_3_OUTSIDE].includes(data.response)) {
           const card = game.deck[game.deckPtr++]
@@ -36,16 +36,23 @@ const handleResponse = async (socket, game, user, token) => {
 
           if (isValid) {
             socket.emit('gameActionResponse', {
-              ok: true,
-              card: card
+              gameResponse: Constants.GAME_RESPONSE_DEAL_2,
+              data: {
+                sips: 0,
+                card: card
+              }
             })
           } else {
             socket.emit('gameActionResponse', {
-              gorgee: user.gorgees += 3,
-              card: card
+              gameResponse: Constants.GAME_RESPONSE_DEAL_2,
+              data: {
+                sips: user.gorgees += 3,
+                card: card
+              }
             })
           }
           user.cards.push(card)
+          socket.removeListener('gameActionResponse', listener)
           resolve()
         }
       }
