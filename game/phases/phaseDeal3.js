@@ -2,7 +2,7 @@ const Constants = require('../constants')
 
 const requestInput = (socket, token) => {
   socket.emit('gameActionRequest', {
-    gameRequest: Constants.GAME_REQUEST_DEAL_3_INTERVAL,
+    gameRequest: Constants.GAME_REQUEST_DEAL_3,
     responseToken: token,
   })
 }
@@ -11,7 +11,7 @@ const handleResponse = async (socket, game, user, token) => {
   return new Promise(resolve => {
     socket.on('gameActionResponse', data => {
       if (data.responseToken === token) {
-        if ([Constants.GAME_RESPONSE_DEAL_3_INSIDE, Constants.GAME_RESPONSE_DEAL_3_OUTSIDE].includes(data.response)) {
+        if ([Constants.GAME_DEAL_3_INSIDE, Constants.GAME_DEAL_3_OUTSIDE].includes(data.response)) {
           const card = game.deck[game.deckPtr++]
 
           let isValid = false
@@ -23,11 +23,11 @@ const handleResponse = async (socket, game, user, token) => {
               firstCard = secondCard
               secondCard = temp
             }
-            if (data.response === Constants.GAME_RESPONSE_DEAL_3_INSIDE
+            if (data.response === Constants.GAME_DEAL_3_INSIDE
               && (card.value > firstCard.value && card.value < secondCard.value)
             ) {
               isValid = true
-            } else if (data.response === Constants.GAME_RESPONSE_DEAL_3_OUTSIDE
+            } else if (data.response === Constants.GAME_DEAL_3_OUTSIDE
               && (card.value < firstCard.value && card.value > secondCard.value)
             ) {
               isValid = true

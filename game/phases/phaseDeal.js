@@ -12,9 +12,9 @@ const gamePhaseDeal = async (phaseDeal, game, sockets) => {
   // TODO: use better token
   const handlers = phaseDealHandlers[phaseDeal]
   const deal = async (socket, user) => {
-    let nextPhaseResponseToken = uuid()
-    handlers.requestInput(socket, nextPhaseResponseToken)
-    await handlers.handleResponse(socket, game, user, nextPhaseResponseToken)
+    const token = uuid()
+    handlers.requestInput(socket, token)
+    await handlers.handleResponse(socket, game, user, token)
   }
 
   const socketsIt = sockets.entries()

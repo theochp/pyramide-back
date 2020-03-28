@@ -2,7 +2,7 @@ const Constants = require('../constants')
 
 const requestInput = (socket, token) => {
   socket.emit('gameActionRequest', {
-    gameRequest: Constants.GAME_REQUEST_DEAL_4_SUIT,
+    gameRequest: Constants.GAME_REQUEST_DEAL_4,
     responseToken: token,
   })
 }
