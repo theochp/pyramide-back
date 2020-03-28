@@ -43,10 +43,11 @@ const handleResponse = async (socket, game, user, token) => {
               }
             })
           } else {
+            user.sips += 3
             socket.emit('gameActionResponse', {
               gameResponse: Constants.GAME_RESPONSE_DEAL_2,
               data: {
-                sips: user.gorgees += 3,
+                sips: 3,
                 card: card
               }
             })

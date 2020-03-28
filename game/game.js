@@ -32,6 +32,7 @@ class Game {
   }
 
   generateDeck() {
+    this.deck = []
     let i
     for (i = 1; i <= 13; ++i) {
       this.deck.push(new Card(Constants.CARD_SUIT_SPADE, i))
@@ -73,8 +74,6 @@ const startGame = async (room, sockets) => {
     })
   })
 
-  game.generateDeck()
-  game.shuffleDeck()
   await phaseDeal(1, game, sockets)
   await delay(500)
   await phaseDeal(2, game, sockets)

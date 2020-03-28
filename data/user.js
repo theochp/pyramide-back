@@ -3,7 +3,7 @@ class User {
     this.id = id
     this.name = name
     this.admin = admin
-    this.gorgees = 0
+    this.sips = 0
     this.cards = []
   }
 }
