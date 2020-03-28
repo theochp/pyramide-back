@@ -28,7 +28,7 @@ const handleResponse = async (socket, game, user, token) => {
             ) {
               isValid = true
             } else if (data.response === Constants.GAME_DEAL_3_OUTSIDE
-              && (card.value < firstCard.value && card.value > secondCard.value)
+              && (card.value < firstCard.value || card.value > secondCard.value)
             ) {
               isValid = true
             }
