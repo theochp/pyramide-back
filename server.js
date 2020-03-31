@@ -10,24 +10,35 @@ const rooms = new Map()
 const roomsSockets = new Map()
 
 // default data for tests
-rooms.set("42", new Room("42", 'Default room'))
-roomsSockets.set("42", new Map())
+// rooms.set('42', new Room('42', 'Default room'))
+// roomsSockets.set('42', new Map())
+
+/*
+  TODO: use room object as server view for a room, and add a method getClientRoom that returns a room instance with non-sensitive data
+ */
+
+const createRoom = (socket, data) => {
+  const roomId = uuid()
+  rooms.set(roomId, new Room(roomId, data['roomName'], data['private']))
+  roomsSockets.set(roomId, new Map())
+  socket.emit('createRoomResponse', { roomId })
+}
 
 const joinRoom = (roomId, user, socket) => {
-
+  socket.join('room_' + roomId)
+  server.to('room_' + roomId).emit('userJoined', {
+    user,
+  })
   roomsSockets.get(roomId).set(user.id, socket)
   rooms.get(roomId).join(user)
 }
 
 server.on('connection', socket => {
-  // TODO : remove these two lines, find a way to properly remove player from party
-  rooms.set("42", new Room("42", 'Default room'))
-  roomsSockets.set("42", new Map())
   socket.on('joinRoom', data => {
     const joinRoomResponse = {
       success: false,
       message: '',
-      room: null
+      room: null,
     }
     const roomId = data['roomId']
     if (rooms.has(roomId)) {
@@ -39,7 +50,7 @@ server.on('connection', socket => {
       joinRoom(
         roomId,
         user,
-        socket
+        socket,
       )
       joinRoomResponse.success = true
       joinRoomResponse.room = rooms.get(roomId)
@@ -49,6 +60,12 @@ server.on('connection', socket => {
       joinRoomResponse.message = 'NO_SUCH_ROOM'
     }
     socket.emit('joinRoomResponse', joinRoomResponse)
+  })
+  socket.on('createRoom', data => createRoom(socket, data))
+  socket.on('getRooms', () => {
+    socket.emit('getRoomsResponse', {
+      rooms: Array.from(rooms.values())
+    })
   })
   socket.on('startGame', data => {
     const roomId = data['roomId']
