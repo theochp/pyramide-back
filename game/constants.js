@@ -44,6 +44,6 @@ module.exports = {
     'SUIT_CLUB',
   ],
 
-  SECONDS_TO_REMEMBER: 3,
+  SECONDS_TO_REMEMBER: 10,
 
 }

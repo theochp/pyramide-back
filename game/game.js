@@ -17,6 +17,7 @@ class Card {
       this.suit = suit
     }
     this.value = value
+    this.show = true
   }
 }
 
@@ -87,7 +88,6 @@ const startGame = async (room) => {
   changeGamePhase(room, Constants.GAME_PHASE_DEAL_4)
   await phaseDeal(4, room)
 
-  await delay(500)
   changeGamePhase(room, Constants.GAME_PHASE_REMEMBER_CARDS)
   await delay(Constants.SECONDS_TO_REMEMBER * 1000)
   changeGamePhase(room, Constants.GAME_PHASE_PLAY)
