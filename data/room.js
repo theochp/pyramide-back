@@ -7,6 +7,7 @@ class Room {
     this.started = false
     this.game = null
     this.private = isPrivate
+    this.adminToken = ''
     this.broadcast = (key, data) => {
       const it = this.users.values()
       let next = it.next()

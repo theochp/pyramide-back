@@ -18,21 +18,13 @@ const createRoom = (socket, data) => {
     data['roomName'],
     data['private'],
   )
-
-  // Listen on start game
-  socket.on('startGame', () => {
-    console.log('start game')
-    startGame(room)
-      .then(() => {
-        console.log('game ended for room ' + roomId)
-      })
-  })
+  room.adminToken = uuid()
 
   // Add room
   rooms.set(roomId, room)
 
   // Notify room creator
-  socket.emit('createRoomResponse', { roomId })
+  socket.emit('createRoomResponse', { roomId, token: room.adminToken })
 }
 
 const joinRoom = (socket, data) => {
@@ -41,14 +33,17 @@ const joinRoom = (socket, data) => {
     success: false,
     message: '',
     room: null,
+    isAdmin: false
   }
 
   const roomId = data['roomId']
+  const adminToken = data['adminToken']
   const room = rooms.get(roomId)
 
   if (room) {
     // Create user
-    const isAdmin = true // TODO: add user to room on creation and set admin to true only for him
+    const isAdmin = adminToken === room.adminToken
+    joinRoomResponse.isAdmin = isAdmin
     const user = new User(
       uuid(),
       data.user.name,
@@ -66,6 +61,15 @@ const joinRoom = (socket, data) => {
 
     // Join room
     rooms.get(roomId).join(user)
+
+    // Listen on start game
+    if (isAdmin)
+      socket.on('startGame', () => {
+        startGame(room)
+          .then(() => {
+            console.log('game ended for room ' + roomId)
+          })
+      })
 
     // Update response
     joinRoomResponse.success = true
