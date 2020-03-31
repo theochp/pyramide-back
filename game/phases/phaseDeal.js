@@ -1,5 +1,4 @@
 const uuid = require('uuid').v4
-const Constants = require('../constants')
 
 const phaseDealHandlers = {
   1: require('./phaseDeal1'),
@@ -8,14 +7,7 @@ const phaseDealHandlers = {
   4: require('./phaseDeal4'),
 }
 
-const dealPhases = {
-  1: Constants.GAME_PHASE_DEAL_1,
-  2: Constants.GAME_PHASE_DEAL_2,
-  3: Constants.GAME_PHASE_DEAL_3,
-  4: Constants.GAME_PHASE_DEAL_4,
-}
-
-const gamePhaseDeal = async (phaseDeal, room, sockets) => {
+const gamePhaseDeal = async (phaseDeal, room) => {
   const handlers = phaseDealHandlers[phaseDeal]
   const deal = async (user) => {
     const token = uuid()

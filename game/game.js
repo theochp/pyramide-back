@@ -1,5 +1,6 @@
 const Constants = require('./constants')
 const phaseDeal = require('./phases/phaseDeal')
+const play = require('./phases/play')
 
 class Card {
   constructor(suit, value) {
@@ -62,7 +63,7 @@ const changeGamePhase = (room, gamePhase) => {
   })
 }
 
-const startGame = async (room, sockets) => {
+const startGame = async (room) => {
   const game = new Game()
   room.game = game
   room.started = true
@@ -75,19 +76,24 @@ const startGame = async (room, sockets) => {
   console.log('game started')
 
   changeGamePhase(room, Constants.GAME_PHASE_DEAL_1)
-  await phaseDeal(1, room, sockets)
+  await phaseDeal(1, room)
 
   await delay(500)
   changeGamePhase(room, Constants.GAME_PHASE_DEAL_2)
-  await phaseDeal(2, room, sockets)
+  await phaseDeal(2, room)
 
   await delay(500)
   changeGamePhase(room, Constants.GAME_PHASE_DEAL_3)
-  await phaseDeal(3, room, sockets)
+  await phaseDeal(3, room)
 
   await delay(500)
   changeGamePhase(room, Constants.GAME_PHASE_DEAL_4)
-  await phaseDeal(4, room, sockets)
+  await phaseDeal(4, room)
+
+  changeGamePhase(room, Constants.GAME_PHASE_REMEMBER_CARDS)
+  await delay(Constants.SECONDS_TO_REMEMBER * 1000)
+  changeGamePhase(room, Constants.GAME_PHASE_PLAY)
+  await play(room)
 }
 
 module.exports = {
