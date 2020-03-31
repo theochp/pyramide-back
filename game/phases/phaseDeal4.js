@@ -1,15 +1,15 @@
 const Constants = require('../constants')
 
-const requestInput = (socket, token) => {
-  socket.emit('gameActionRequest', {
+const requestInput = (user, token) => {
+  user.socket.emit('gameActionRequest', {
     gameRequest: Constants.GAME_REQUEST_DEAL_4,
     responseToken: token,
   })
 }
 
-const handleResponse = async (socket, game, user, token) => {
+const handleResponse = async (game, user, token) => {
   return new Promise(resolve => {
-    socket.on('gameActionResponse', function listener(data) {
+    user.socket.on('gameActionResponse', function listener(data) {
       if (data.responseToken === token) {
         if (Constants.CARD_SUITS.includes(data.response)) {
           const card = game.deck[game.deckPtr++]
@@ -22,7 +22,7 @@ const handleResponse = async (socket, game, user, token) => {
           }
 
           if (isValid) {
-            socket.emit('gameActionResponse', {
+            user.socket.emit('gameActionResponse', {
               gameResponse: Constants.GAME_RESPONSE_DEAL_2,
               data: {
                 sips: 0,
@@ -31,7 +31,7 @@ const handleResponse = async (socket, game, user, token) => {
             })
           } else {
             user.sips += 4
-            socket.emit('gameActionResponse', {
+            user.socket.emit('gameActionResponse', {
               gameResponse: Constants.GAME_RESPONSE_DEAL_2,
               data: {
                 sips: 4,
@@ -40,7 +40,7 @@ const handleResponse = async (socket, game, user, token) => {
             })
           }
           user.cards.push(card)
-          socket.removeListener('gameActionResponse', listener)
+          user.socket.removeListener('gameActionResponse', listener)
           resolve()
         }
       }

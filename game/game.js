@@ -24,11 +24,10 @@ const delay = (ms) => {
 }
 
 class Game {
-  constructor(phase, players) {
-    this.phase = phase
+  constructor() {
+    this.phase = null
     this.deck = []
     this.deckPtr = 0
-    this.players = players
   }
 
   generateDeck() {
@@ -52,38 +51,46 @@ class Game {
     }
   }
 }
-/*
-TODO: give card to player, draw the other one and verify
- */
 
+const changeGamePhase = (room, gamePhase) => {
+  room.game.phase = gamePhase
+  room.broadcast('gameUpdate', {
+    type: 'GAME_PHASE_CHANGE',
+    payload: {
+      gamePhase: gamePhase,
+    },
+  })
+}
 
 const startGame = async (room, sockets) => {
-  room.started = true
-  const game = new Game(Constants.GAME_PHASE_DEAL_1, room.users)
+  const game = new Game()
   room.game = game
-  console.log('game started')
+  room.started = true
+  changeGamePhase(room, Constants.GAME_UPDATE_GAME_PHASE)
+
   game.generateDeck()
   game.shuffleDeck()
-  // TODO: create socket room instead of sending to all
-  sockets.forEach(socket => {
-    socket.emit('gameUpdate', {
-      type: 'GAME_PHASE_CHANGE',
-      payload: {
-        gamePhase: game.phase,
-      },
-    })
-  })
 
-  await phaseDeal(1, game, sockets)
+
+  console.log('game started')
+
+  changeGamePhase(room, Constants.GAME_PHASE_DEAL_1)
+  await phaseDeal(1, room, sockets)
+
   await delay(500)
-  await phaseDeal(2, game, sockets)
+  changeGamePhase(room, Constants.GAME_PHASE_DEAL_2)
+  await phaseDeal(2, room, sockets)
+
   await delay(500)
-  await phaseDeal(3, game, sockets)
+  changeGamePhase(room, Constants.GAME_PHASE_DEAL_3)
+  await phaseDeal(3, room, sockets)
+
   await delay(500)
-  await phaseDeal(4, game, sockets)
+  changeGamePhase(room, Constants.GAME_PHASE_DEAL_4)
+  await phaseDeal(4, room, sockets)
 }
 
 module.exports = {
   Game: Game,
-  startGame: startGame
+  startGame: startGame,
 }

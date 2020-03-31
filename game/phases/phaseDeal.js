@@ -8,23 +8,27 @@ const phaseDealHandlers = {
   4: require('./phaseDeal4'),
 }
 
-const gamePhaseDeal = async (phaseDeal, game, sockets) => {
-  // TODO: use better token
+const dealPhases = {
+  1: Constants.GAME_PHASE_DEAL_1,
+  2: Constants.GAME_PHASE_DEAL_2,
+  3: Constants.GAME_PHASE_DEAL_3,
+  4: Constants.GAME_PHASE_DEAL_4,
+}
+
+const gamePhaseDeal = async (phaseDeal, room, sockets) => {
   const handlers = phaseDealHandlers[phaseDeal]
-  const deal = async (socket, user) => {
+  const deal = async (user) => {
     const token = uuid()
-    handlers.requestInput(socket, token)
-    await handlers.handleResponse(socket, game, user, token)
+    handlers.requestInput(user, token)
+    await handlers.handleResponse(room.game, user, token)
   }
 
-  const socketsIt = sockets.entries()
-  let next = socketsIt.next()
+  const playersIt = room.users.values()
+  let next = playersIt.next()
   while (!next.done) {
-    const userId = next.value[0]
-    const socket = next.value[1]
-    const user = game.players.get(userId)
-    await deal(socket, user)
-    next = socketsIt.next()
+    const user = next.value
+    await deal(user)
+    next = playersIt.next()
   }
 }
 
