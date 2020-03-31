@@ -78,15 +78,12 @@ const startGame = async (room) => {
   changeGamePhase(room, Constants.GAME_PHASE_DEAL_1)
   await phaseDeal(1, room)
 
-  await delay(500)
   changeGamePhase(room, Constants.GAME_PHASE_DEAL_2)
   await phaseDeal(2, room)
 
-  await delay(500)
   changeGamePhase(room, Constants.GAME_PHASE_DEAL_3)
   await phaseDeal(3, room)
 
-  await delay(500)
   changeGamePhase(room, Constants.GAME_PHASE_DEAL_4)
   await phaseDeal(4, room)
 
