@@ -55,7 +55,7 @@ class Game {
 const changeGamePhase = (room, gamePhase) => {
   room.game.phase = gamePhase
   room.broadcast('gameUpdate', {
-    type: 'GAME_PHASE_CHANGE',
+    type: Constants.GAME_UPDATE_GAME_PHASE,
     payload: {
       gamePhase: gamePhase,
     },
@@ -66,7 +66,7 @@ const startGame = async (room, sockets) => {
   const game = new Game()
   room.game = game
   room.started = true
-  changeGamePhase(room, Constants.GAME_UPDATE_GAME_PHASE)
+  changeGamePhase(room, Constants.GAME_PHASE_WAITING)
 
   game.generateDeck()
   game.shuffleDeck()
