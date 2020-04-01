@@ -24,17 +24,35 @@ const inputNextCard = async room => {
     toRemove[i].removeAllListeners('getNextCard')
 }
 
+const computePyramidRows = (nCards) => {
+  let n = 0
+  let total = 0
+
+  while (total + n + 1 < nCards) {
+    n++
+    total += n
+  }
+
+  return {
+    nRows: n,
+    totalCards: total,
+  }
+}
+
 const play = async room => {
   const game = room.game
 
+  const remainingCards = room.game.deck.length - room.game.deckPtr
   room.broadcast('gameUpdate', {
     type: Constants.GAME_UPDATE_REMAINING_CARD,
     payload: {
-      remainingCards: room.game.deck.length - room.game.deckPtr
+      remainingCards
     }
   })
 
-  while (game.deckPtr < game.deck.length) {
+  const pyramidRows = computePyramidRows(remainingCards)
+  let i = 0
+  while (i++ < pyramidRows.totalCards) {
     await inputNextCard(room)
     const card = game.deck[game.deckPtr++]
     room.broadcast('gameUpdate', {
