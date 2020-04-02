@@ -1,5 +1,6 @@
 const io = require('socket.io').listen(3001)
 const uuid = require('uuid').v4
+const Constants = require('./game/constants')
 const Room = require('./data/room')
 const User = require('./data/user')
 const { startGame } = require('./game/game')
@@ -17,6 +18,13 @@ const createRoom = (socket, data) => {
     roomId,
     data['roomName'],
     data['private'],
+    (key, data, fromSocket = null) => {
+      if (fromSocket) {
+        fromSocket.broadcast.to(roomId).emit(key, data)
+      } else {
+        io.to(roomId).emit(key, data)
+      }
+    }
   )
   room.adminToken = uuid()
 
@@ -52,12 +60,12 @@ const joinRoom = (socket, data) => {
     )
 
     // Join room socket
-    // socket.join(roomId) // TODO: find a way to make socket rooms to work
+    socket.join(roomId)
 
-    // Notify room that a new user joined
-    // room.broadcast('userJoined', {
-    //   user,
-    // })
+    room.broadcast('gameUpdate', {
+      type: Constants.GAME_UPDATE_USER_JOINED,
+      user: user.getPlayer(),
+    }, socket)
 
     // Join room
     rooms.get(roomId).join(user)

@@ -8,7 +8,7 @@ class User {
     this.cards = []
   }
 
-  getPlayer(showCards) {
+  getPlayer(showCards = false) {
     return {
       name: this.name,
       sips: this.sips,
