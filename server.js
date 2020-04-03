@@ -33,6 +33,12 @@ const createRoom = (socket, data) => {
 
   // Notify room creator
   socket.emit('createRoomResponse', { roomId, token: room.adminToken })
+
+  // TODO : change event name
+  // update room list
+  io.sockets.emit('getRoomsResponse', {
+    rooms: Array.from(rooms.values()).map(room => room.getSafeVersion()).filter(room => !room.private),
+  })
 }
 
 const joinRoom = (socket, data) => {
@@ -97,7 +103,7 @@ io.on('connection', socket => {
   socket.on('createRoom', data => createRoom(socket, data))
   socket.on('getRooms', () => {
     socket.emit('getRoomsResponse', {
-      rooms: Array.from(rooms.values()).map(room => room.getSafeVersion()),
+      rooms: Array.from(rooms.values()).map(room => room.getSafeVersion()).filter(room => !room.private),
     })
   })
 })
