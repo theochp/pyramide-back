@@ -1,4 +1,5 @@
 const uuid = require('uuid').v4
+const Constants = require('../constants')
 
 const phaseDealHandlers = {
   1: require('./phaseDeal1'),
@@ -20,6 +21,15 @@ const gamePhaseDeal = async (phaseDeal, room) => {
   while (!next.done) {
     const user = next.value
     await deal(user)
+
+    room.broadcast('gameUpdate', {
+      type: Constants.GAME_UPDATE_CARD_DEALT,
+      payload: {
+        user: user.getPlayer(),
+        card: user.cards[user.cards.length - 1]
+      }
+    }, user.socket)
+
     next = playersIt.next()
   }
 }

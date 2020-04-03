@@ -21,10 +21,6 @@ class Card {
   }
 }
 
-const delay = (ms) => {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
 class Game {
   constructor() {
     this.phase = null
@@ -89,7 +85,6 @@ const startGame = async (room) => {
   await phaseDeal(4, room)
 
   changeGamePhase(room, Constants.GAME_PHASE_REMEMBER_CARDS)
-
 
   await new Promise(resolve => room.users.forEach(user => {
     if (user.admin) {

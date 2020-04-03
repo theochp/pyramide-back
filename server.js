@@ -24,7 +24,7 @@ const createRoom = (socket, data) => {
       } else {
         io.to(roomId).emit(key, data)
       }
-    }
+    },
   )
   room.adminToken = uuid()
 
@@ -47,7 +47,8 @@ const joinRoom = (socket, data) => {
     success: false,
     message: '',
     room: null,
-    isAdmin: false
+    players: [],
+    isAdmin: false,
   }
 
   const roomId = data['roomId']
@@ -89,6 +90,11 @@ const joinRoom = (socket, data) => {
     joinRoomResponse.success = true
     joinRoomResponse.room = room.getSafeVersion()
     joinRoomResponse.userId = user.id
+    room.users.forEach(u => {
+      if (u.name !== user.name) {
+        joinRoomResponse.players.push(u.getPlayer())
+      }
+    })
   } else {
     joinRoomResponse.success = false
     joinRoomResponse.message = 'NO_SUCH_ROOM'
