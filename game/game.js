@@ -89,7 +89,18 @@ const startGame = async (room) => {
   await phaseDeal(4, room)
 
   changeGamePhase(room, Constants.GAME_PHASE_REMEMBER_CARDS)
-  await delay(Constants.SECONDS_TO_REMEMBER * 1000)
+
+
+  await new Promise(resolve => room.users.forEach(user => {
+    if (user.admin) {
+      user.socket.on('gameAction', action => {
+        if (action.type === Constants.GAME_ACTION_START_PLAY) {
+          resolve()
+        }
+      })
+    }
+  }))
+
   changeGamePhase(room, Constants.GAME_PHASE_PLAY)
   await play(room)
 }
