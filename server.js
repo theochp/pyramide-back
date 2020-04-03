@@ -91,7 +91,7 @@ const joinRoom = (socket, data) => {
     joinRoomResponse.room = room.getSafeVersion()
     joinRoomResponse.userId = user.id
     room.users.forEach(u => {
-      if (u.name !== user.name) {
+      if (u.id !== user.id) {
         joinRoomResponse.players.push(u.getPlayer())
       }
     })

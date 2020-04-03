@@ -10,6 +10,7 @@ class User {
 
   getPlayer(showCards = false) {
     return {
+      id: this.id,
       name: this.name,
       sips: this.sips,
       cards: showCards ? this.cards : []
