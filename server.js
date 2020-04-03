@@ -34,7 +34,7 @@ const createRoom = (socket, data) => {
   // Notify room creator
   socket.emit('createRoomResponse', { roomId, token: room.adminToken })
 
-  // TODO : change event name
+  // TODO : change event name, maybe create a socket room for those who already got the list, to prevent sending the list to users that are not on this page
   // update room list
   io.sockets.emit('getRoomsResponse', {
     rooms: Array.from(rooms.values()).map(room => room.getSafeVersion()).filter(room => !room.private),

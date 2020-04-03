@@ -42,6 +42,25 @@ const computePyramidRows = (nCards) => {
 const play = async room => {
   const game = room.game
 
+  // Handle players showing their cards
+  const playersIt = room.users.values()
+  let next = playersIt.next()
+  while (!next.done) {
+    const user = next.value
+    user.socket.on('showCard', data => {
+      const cardIdx = data['cardIdx']
+      if (cardIdx >= 0 && cardIdx < user.cards.length) {
+        room.broadcast('gameUpdate', {
+          type: Constants.GAME_UPDATE_USER_SHOW_CARD,
+          card: user.cards[cardIdx],
+          cardIdx: cardIdx,
+          user: user.getPlayer()
+        }, user.socket)
+      }
+    })
+    next = playersIt.next()
+  }
+
   const remainingCards = room.game.deck.length - room.game.deckPtr
   room.broadcast('gameUpdate', {
     type: Constants.GAME_UPDATE_REMAINING_CARD,
